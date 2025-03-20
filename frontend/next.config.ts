@@ -5,9 +5,12 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
+        protocol: 'https',
+        hostname: 'hub.ranobe.vn',
+      },
+      {
         protocol: 'http',
         hostname: 'localhost',
-        port: '3001',
       },
     ],
   },
