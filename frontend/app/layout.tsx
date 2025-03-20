@@ -1,20 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Lexend } from "next/font/google";
+import { Toaster } from "@/components/ui/sonner"
 import "./globals.css";
-import { redirect } from "next/navigation";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const lexend = Lexend({
+  variable: "--font-lexend",
+  subsets: ["vietnamese"],
 });
 
 export const metadata: Metadata = {
-  title: "Raw Ranobe Reader | Meoki",
+  title: "Rano EPUB Reader | Meoki",
   description:
     "Trình đọc Light Novel gốc Nhật dưới dạng sách điện tử được chia sẻ từ Meoki.",
 };
@@ -24,14 +19,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  redirect("https://ranobe.vn");
-  // return (
-  //   <html lang="en">
-  //     <body
-  //       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-  //     >
-  //       {children}
-  //     </body>
-  //   </html>
-  // );
+  return (
+    <html lang="en">
+      <body className={`${lexend.variable} antialiased`}>{children}<Toaster /></body>
+    </html>
+  );
 }

@@ -1,0 +1,154 @@
+'use client';
+
+import { useState } from 'react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Edit, Trash2, Eye } from 'lucide-react';
+import { Ebook } from '@/lib/types';
+import { api } from '@/lib/api';
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import Image from 'next/image';
+import Link from 'next/link';
+
+interface EbookTableProps {
+  ebooks: Ebook[];
+  onEdit: (ebook: Ebook) => void;
+  onDeleteSuccess: () => void;
+}
+
+export function EbookTable({ ebooks, onEdit, onDeleteSuccess }: EbookTableProps) {
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [ebookToDelete, setEbookToDelete] = useState<Ebook | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!ebookToDelete) return;
+
+    try {
+      setIsDeleting(true);
+      await api.delete(`/ebooks/${ebookToDelete._id}`);
+      toast.success("Xóa thành công",{
+        description: `Đã xóa "${ebookToDelete.name}" khỏi thư viện`,
+      });
+      onDeleteSuccess();
+    } catch (error) {
+      console.error('Lỗi khi xóa ebook:', error);
+      toast.error("Lỗi",{
+        description: 'Không thể xóa ebook. Vui lòng thử lại sau.',
+      });
+    } finally {
+      setIsDeleting(false);
+      setIsDeleteDialogOpen(false);
+      setEbookToDelete(null);
+    }
+  };
+
+  const openDeleteDialog = (ebook: Ebook) => {
+    setEbookToDelete(ebook);
+    setIsDeleteDialogOpen(true);
+  };
+
+  if (ebooks.length === 0) {
+    return (
+      <div className="text-center py-12 text-muted-foreground">
+        Chưa có ebook nào trong thư viện
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[80px]">Bìa</TableHead>
+              <TableHead>Tên sách</TableHead>
+              <TableHead>Tác giả</TableHead>
+              <TableHead>Họa sĩ</TableHead>
+              <TableHead className="text-right">Thao tác</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {ebooks.map((ebook) => (
+              <TableRow key={ebook._id}>
+                <TableCell>
+                  <div className="relative h-12 w-9 overflow-hidden rounded">
+                    <Image
+                      src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/covers/${ebook.coverImage}`}
+                      alt={ebook.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                </TableCell>
+                <TableCell className="font-medium">{ebook.name}</TableCell>
+                <TableCell>{ebook.author}</TableCell>
+                <TableCell>{ebook.illustrator}</TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2">
+                    <Button size="icon" variant="outline" asChild>
+                      <Link href={`/reader?book=${ebook.filePath}`} target="_blank">
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                    <Button size="icon" variant="outline" onClick={() => onEdit(ebook)}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      size="icon" 
+                      variant="outline" 
+                      className="text-red-500"
+                      onClick={() => openDeleteDialog(ebook)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Xác nhận xóa</AlertDialogTitle>
+            <AlertDialogDescription>
+              Bạn có chắc chắn muốn xóa ebook &quot;{ebookToDelete?.name}&quot;? 
+              Hành động này không thể hoàn tác.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Hủy</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              {isDeleting ? 'Đang xóa...' : 'Xóa'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}

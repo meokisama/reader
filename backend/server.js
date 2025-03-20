@@ -1,18 +1,52 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
 const path = require('path');
+const ebookRoutes = require('./routes/api/ebooks');
+const adminRoutes = require('./routes/api/admin');
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use('/uploads/covers', express.static(path.join(__dirname, 'uploads', 'covers')));
+
+// Use this to allow both origins
+app.use(cors({
+    origin: ['http://localhost:3000', 'https://hub.ranobe.vn']
+}));
+
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost:27017/ebookdb', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+    .then(() => console.log('MongoDB Connected'))
+    .catch(err => console.log(err));
+
+// Routes
+app.use('/api/ebooks', ebookRoutes);
+app.use('/api/admin', adminRoutes);
+
+// Serve reader
 app.use('/reader', express.static(path.join(__dirname, 'reader')));
 
-app.use('/bookshelf', (req, res, next) => {
+app.use('/uploads/ebooks', (req, res, next) => {
     const referer = req.get('referer');
-
-    if (referer && referer.includes('/reader')) {
-        express.static(path.join(__dirname, 'bookshelf'))(req, res, next);
-    } else {
-        res.status(403).redirect('/reader');
+    if (!referer) {
+        return res.status(403).sendFile(path.join(__dirname, 'error', '403.html'));
     }
+    try {
+        const refererUrl = new URL(referer);
+        const host = req.get('host');
+        if (refererUrl.host === host && (refererUrl.pathname.startsWith('/reader') || refererUrl.pathname.startsWith('/admin'))) {
+            return express.static(path.join(__dirname, 'uploads', 'ebooks'))(req, res, next);
+        }
+    } catch (error) {
+        console.error('Invalid referer URL:', error);
+    }
+    res.status(403).sendFile(path.join(__dirname, 'error', '403.html'));
 });
 
 app.get('/reader', (req, res, next) => {
@@ -22,8 +56,8 @@ app.get('/reader', (req, res, next) => {
     next();
 });
 
-app.get('/', (req, res) => {
-    res.redirect('https://ranobe.vn');
+app.get('/reader/*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'reader', 'index.html'));
 });
 
 app.listen(port, () => {

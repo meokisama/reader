@@ -2,15 +2,17 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-
-  // https://github.com/vercel/next.js/discussions/12373
-  rewrites: async () => {
-    return [
+  images: {
+    remotePatterns: [
       {
-        source: "/reader",
-        destination: "/reader/index.html",
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3001',
       },
-    ];
+    ],
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
 };
 
