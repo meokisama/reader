@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const ebookRoutes = require('./routes/api/ebooks');
 const adminRoutes = require('./routes/api/admin');
+const connectDB = require('./config/db');
 const app = express();
 const port = process.env.PORT || 3001;
 
@@ -18,12 +19,7 @@ app.use(cors({
 }));
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/ebookdb', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-    .then(() => console.log('MongoDB Connected'))
-    .catch(err => console.log(err));
+connectDB();
 
 // Routes
 app.use('/api/ebooks', ebookRoutes);
