@@ -1,12 +1,20 @@
-import { EbookGrid } from '@/components/ebooks/ebook-grid';
+import { CoverCarousel } from "@/components/home/covers-carousel";
+import { EbookGrid } from "@/components/home/ebook-grid";
+import { Promo } from "@/components/home/promo";
+import Image from "next/image";
 
 export default function HomePage() {
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight">Thư viện Ebook</h1>
-      <p className="text-muted-foreground">
-        Khám phá bộ sưu tập sách điện tử của chúng tôi
-      </p>
+    <div className="space-y-6 pb-12">
+      <Image
+        src="/sneaker.webp"
+        alt="background image"
+        width={1308}
+        height={1000}
+        className="fixed w-full h-auto -z-[1] opacity-70 dark:hidden select-none pointer-events-none"
+      />
+      <CoverCarousel />
+      <Promo />
       <EbookGrid />
     </div>
   );

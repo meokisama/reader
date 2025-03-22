@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { EbookCard } from './ebook-card';
-import { api } from '@/lib/api';
-import { Ebook } from '@/lib/types';
+import { useEffect, useState } from "react";
+import { EbookCard } from "./ebook-card";
+import { api } from "@/lib/api";
+import { Ebook } from "@/lib/types";
 
 export function EbookGrid() {
   const [ebooks, setEbooks] = useState<Ebook[]>([]);
@@ -14,11 +14,11 @@ export function EbookGrid() {
     const fetchEbooks = async () => {
       try {
         setLoading(true);
-        const res = await api.get('/ebooks');
+        const res = await api.get("/ebooks");
         setEbooks(res.data);
       } catch (err) {
-        console.error('Lỗi khi tải danh sách ebook:', err);
-        setError('Không thể tải danh sách ebook');
+        console.error("Lỗi khi tải danh sách ebook:", err);
+        setError("Không thể tải danh sách ebook");
       } finally {
         setLoading(false);
       }
@@ -44,7 +44,7 @@ export function EbookGrid() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 max-w-screen-xl mx-auto p-4">
       {ebooks.map((ebook) => (
         <EbookCard key={ebook._id} ebook={ebook} />
       ))}

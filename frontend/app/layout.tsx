@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Lexend } from "next/font/google";
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
-import { redirect } from "next/navigation";
 
 const lexend = Lexend({
   variable: "--font-lexend",
@@ -20,10 +19,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  redirect("https://ranobe.vn");
   return (
     <html lang="en">
-      <body className={`${lexend.variable} antialiased`}>{children}<Toaster /></body>
+      <body className={`${lexend.variable} antialiased`}>
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }

@@ -1,0 +1,45 @@
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { MessageCircleIcon, HomeIcon } from "lucide-react";
+export const Promo = () => {
+  return (
+    <div className="border border-gray-200 rounded-lg relative max-w-screen-xl mx-auto flex flex-col md:flex-row items-center gap-4">
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 -z-1 h-full w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px] [&>div]:absolute [&>div]:left-0 [&>div]:right-0 [&>div]:top-0 [&>div]:-z-10 [&>div]:m-auto [&>div]:h-[310px] [&>div]:w-[310px] [&>div]:rounded-full [&>div]:bg-fuchsia-400 [&>div]:opacity-20 [&>div]:blur-[100px]"></div>
+      </div>
+      <div className="flex-none p-4 text-center md:pl-12 md:text-left z-10 relative">
+        <h2 className="text-2xl font-bold">
+          Đọc những bài phân tích chất lượng?
+        </h2>
+        <p className="text-gray-400 font-light">
+          Hoặc muốn yêu cầu cho tập truyện raw không có trong danh sách dưới
+          đây?
+        </p>
+        <div className="flex gap-2 z-10 mt-8 justify-center md:justify-start">
+          <Link href="https://ranobe.vn">
+            <Button className="cursor-pointer">
+              <HomeIcon className="w-4 h-4" />
+              Trang Chủ Ranobe
+            </Button>
+          </Link>
+          <Link href="https://facebook.com/TheMeoki">
+            <Button variant="outline" className="cursor-pointer">
+              <MessageCircleIcon className="w-4 h-4" />
+              Nhắn Tin
+            </Button>
+          </Link>
+        </div>
+      </div>
+      <div className="flex-auto flex justify-end">
+        <Image
+          src="/uwu.png"
+          alt="sneaker"
+          width={536}
+          height={391}
+          className="h-auto"
+        />
+      </div>
+    </div>
+  );
+};

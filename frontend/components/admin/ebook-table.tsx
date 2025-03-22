@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -8,11 +8,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Edit, Trash2, Eye } from 'lucide-react';
-import { Ebook } from '@/lib/types';
-import { api } from '@/lib/api';
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Edit, Trash2, Eye } from "lucide-react";
+import { Ebook } from "@/lib/types";
+import { api } from "@/lib/api";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -23,9 +23,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import Image from 'next/image';
-import Link from 'next/link';
+} from "@/components/ui/alert-dialog";
+import Image from "next/image";
+import Link from "next/link";
 
 interface EbookTableProps {
   ebooks: Ebook[];
@@ -33,7 +33,11 @@ interface EbookTableProps {
   onDeleteSuccess: () => void;
 }
 
-export function EbookTable({ ebooks, onEdit, onDeleteSuccess }: EbookTableProps) {
+export function EbookTable({
+  ebooks,
+  onEdit,
+  onDeleteSuccess,
+}: EbookTableProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [ebookToDelete, setEbookToDelete] = useState<Ebook | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -44,14 +48,14 @@ export function EbookTable({ ebooks, onEdit, onDeleteSuccess }: EbookTableProps)
     try {
       setIsDeleting(true);
       await api.delete(`/ebooks/${ebookToDelete._id}`);
-      toast.success("Xóa thành công",{
+      toast.success("Xóa thành công", {
         description: `Đã xóa "${ebookToDelete.name}" khỏi thư viện`,
       });
       onDeleteSuccess();
     } catch (error) {
-      console.error('Lỗi khi xóa ebook:', error);
-      toast.error("Lỗi",{
-        description: 'Không thể xóa ebook. Vui lòng thử lại sau.',
+      console.error("Lỗi khi xóa ebook:", error);
+      toast.error("Lỗi", {
+        description: "Không thể xóa ebook. Vui lòng thử lại sau.",
       });
     } finally {
       setIsDeleting(false);
@@ -83,7 +87,7 @@ export function EbookTable({ ebooks, onEdit, onDeleteSuccess }: EbookTableProps)
               <TableHead>Tên sách</TableHead>
               <TableHead>Tác giả</TableHead>
               <TableHead>Họa sĩ</TableHead>
-              <TableHead className="text-right">Thao tác</TableHead>
+              <TableHead className="text-end">Thao tác</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -99,22 +103,35 @@ export function EbookTable({ ebooks, onEdit, onDeleteSuccess }: EbookTableProps)
                     />
                   </div>
                 </TableCell>
-                <TableCell className="font-medium">{ebook.name}</TableCell>
-                <TableCell>{ebook.author}</TableCell>
-                <TableCell>{ebook.illustrator}</TableCell>
-                <TableCell className="text-right">
+                <TableCell className="font-['Yu_Mincho']">
+                  {ebook.name}
+                </TableCell>
+                <TableCell className="font-['Yu_Mincho']">
+                  {ebook.author}
+                </TableCell>
+                <TableCell className="font-['Yu_Mincho']">
+                  {ebook.illustrator}
+                </TableCell>
+                <TableCell className="text-end">
                   <div className="flex justify-end gap-2">
                     <Button size="icon" variant="outline" asChild>
-                      <Link href={`/reader?book=${ebook.filePath}`} target="_blank">
+                      <Link
+                        href={`${process.env.NEXT_PUBLIC_API_URL}/reader?book=${ebook.filePath}`}
+                        target="_blank"
+                      >
                         <Eye className="h-4 w-4" />
                       </Link>
                     </Button>
-                    <Button size="icon" variant="outline" onClick={() => onEdit(ebook)}>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={() => onEdit(ebook)}
+                    >
                       <Edit className="h-4 w-4" />
                     </Button>
-                    <Button 
-                      size="icon" 
-                      variant="outline" 
+                    <Button
+                      size="icon"
+                      variant="outline"
                       className="text-red-500"
                       onClick={() => openDeleteDialog(ebook)}
                     >
@@ -128,23 +145,26 @@ export function EbookTable({ ebooks, onEdit, onDeleteSuccess }: EbookTableProps)
         </Table>
       </div>
 
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Xác nhận xóa</AlertDialogTitle>
             <AlertDialogDescription>
-              Bạn có chắc chắn muốn xóa ebook &quot;{ebookToDelete?.name}&quot;? 
+              Bạn có chắc chắn muốn xóa ebook &quot;{ebookToDelete?.name}&quot;?
               Hành động này không thể hoàn tác.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isDeleting}>Hủy</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={handleDelete}
               disabled={isDeleting}
               className="bg-red-500 hover:bg-red-600"
             >
-              {isDeleting ? 'Đang xóa...' : 'Xóa'}
+              {isDeleting ? "Đang xóa..." : "Xóa"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -1,11 +1,9 @@
-// components/admin/ebook-form.tsx
-'use client';
-
-import { useState } from 'react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/components/ui/button';
+"use client";
+import { useState } from "react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -13,13 +11,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { api } from '@/lib/api';
-import { Ebook } from '@/lib/types';
-import Image from 'next/image';
+import {
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { api } from "@/lib/api";
+import { Ebook } from "@/lib/types";
+import Image from "next/image";
 
 interface EbookFormProps {
   ebook: Ebook | null;
@@ -28,8 +30,8 @@ interface EbookFormProps {
 }
 
 const formSchema = z.object({
-  name: z.string().min(1, { message: 'Tên sách không được để trống' }),
-  author: z.string().min(1, { message: 'Tên tác giả không được để trống' }),
+  name: z.string().min(1, { message: "Tên sách không được để trống" }),
+  author: z.string().min(1, { message: "Tên tác giả không được để trống" }),
   illustrator: z.string().optional(),
 });
 
@@ -37,16 +39,19 @@ export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [ebookFile, setEbookFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(
-    ebook ? `${process.env.NEXT_PUBLIC_API_URL}/uploads/covers/${ebook.coverImage}` : null
+    ebook
+      ? `${process.env.NEXT_PUBLIC_API_URL}/uploads/covers/${ebook.coverImage}`
+      : null
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: ebook?.name || '',
-      author: ebook?.author || '',
-      illustrator: ebook?.illustrator === 'Unknown' ? '' : ebook?.illustrator || '',
+      name: ebook?.name || "",
+      author: ebook?.author || "",
+      illustrator:
+        ebook?.illustrator === "Unknown" ? "" : ebook?.illustrator || "",
     },
   });
 
@@ -54,7 +59,7 @@ export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       setCoverFile(file);
-      
+
       // Tạo preview
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -73,26 +78,26 @@ export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsSubmitting(true);
-      
+
       // Kiểm tra file khi thêm mới
       if (!ebook && !ebookFile) {
-        toast.error("Lỗi",{
-          description: 'Vui lòng tải lên file ebook',
+        toast.error("Lỗi", {
+          description: "Vui lòng tải lên file ebook",
         });
         return;
       }
 
       const formData = new FormData();
-      formData.append('name', values.name);
-      formData.append('author', values.author);
-      formData.append('illustrator', values.illustrator || 'Unknown');
-      
+      formData.append("name", values.name);
+      formData.append("author", values.author);
+      formData.append("illustrator", values.illustrator || "Unknown");
+
       if (coverFile) {
-        formData.append('cover', coverFile);
+        formData.append("cover", coverFile);
       }
-      
+
       if (ebookFile) {
-        formData.append('ebook', ebookFile);
+        formData.append("ebook", ebookFile);
       }
 
       let response;
@@ -100,29 +105,30 @@ export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
         // Cập nhật
         response = await api.put(`/ebooks/${ebook._id}`, formData, {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         });
-        toast.success("Cập nhật thành công",{
+        toast.success("Cập nhật thành công", {
           description: `Đã cập nhật thông tin cho "${values.name}"`,
         });
       } else {
         // Thêm mới
-        response = await api.post('/ebooks', formData, {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        response = await api.post("/ebooks", formData, {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         });
-        toast.success("Thêm mới thành công",{
+        toast.success("Thêm mới thành công", {
           description: `Đã thêm "${values.name}" vào thư viện`,
         });
       }
-      
+
       onSuccess();
     } catch (error) {
-      console.error('Lỗi khi lưu ebook:', error);
-      toast.error("Lỗi",{
-        description: 'Không thể lưu thông tin ebook. Vui lòng thử lại sau.',
+      console.error("Lỗi khi lưu ebook:", error);
+      toast.error("Lỗi", {
+        description: "Không thể lưu thông tin ebook. Vui lòng thử lại sau.",
       });
     } finally {
       setIsSubmitting(false);
@@ -130,129 +136,139 @@ export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{ebook ? 'Chỉnh sửa' : 'Thêm mới'} Ebook</CardTitle>
-      </CardHeader>
+    <>
+      <DialogHeader>
+        <DialogTitle>{ebook ? "Chỉnh sửa" : "Thêm mới"} Ebook</DialogTitle>
+      </DialogHeader>
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardContent className="space-y-6">
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="w-full md:w-1/3 lg:w-1/4 space-y-4">
-                <div className="rounded-md border p-2 aspect-[2/3] relative overflow-hidden">
-                  {coverPreview ? (
-                    <Image
-                      src={coverPreview}
-                      alt="Cover preview"
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-muted">
-                      Chưa có ảnh bìa
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    {coverPreview ? 'Thay đổi ảnh bìa' : 'Tải lên ảnh bìa'}
-                  </label>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleCoverChange}
-                    disabled={isSubmitting}
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <div className="flex flex-col md:flex-row gap-6">
+            <div className="w-full md:w-2/5 space-y-4">
+              <div className="rounded-md h-full border p-2 aspect-[2/3] relative overflow-hidden">
+                {coverPreview ? (
+                  <Image
+                    src={coverPreview}
+                    alt="Cover preview"
+                    fill
+                    className="object-cover"
                   />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Định dạng: JPG, PNG, GIF
-                  </p>
-                </div>
-                
-                <div className="mt-4">
-                  <label className="block text-sm font-medium mb-1">
-                    {ebook ? 'Thay đổi file ebook (không bắt buộc)' : 'Tải lên file ebook'}
-                  </label>
-                  <Input
-                    type="file"
-                    accept=".epub,.pdf"
-                    onChange={handleEbookChange}
-                    disabled={isSubmitting}
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Định dạng: EPUB, PDF
-                  </p>
-                  {ebook && (
-                    <p className="text-xs font-medium mt-2">
-                      File hiện tại: {ebook.filePath}
-                    </p>
-                  )}
-                </div>
-              </div>
-              
-              <div className="flex-1 space-y-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tên sách</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Nhập tên sách" {...field} disabled={isSubmitting} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="author"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tác giả</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Nhập tên tác giả" {...field} disabled={isSubmitting} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="illustrator"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Họa sĩ (không bắt buộc)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Nhập tên họa sĩ" {...field} disabled={isSubmitting} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-muted">
+                    Chưa có ảnh bìa
+                  </div>
+                )}
               </div>
             </div>
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button 
-              type="button" 
-              variant="outline" 
+
+            <div className="flex-1 shrink-1 space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tên sách</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        disabled={isSubmitting}
+                        className="font-['Yu_Mincho']"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="author"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tác giả</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        disabled={isSubmitting}
+                        className="font-['Yu_Mincho']"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="illustrator"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Họa sĩ (không bắt buộc)</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        disabled={isSubmitting}
+                        className="font-['Yu_Mincho']"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  {coverPreview ? "Thay đổi ảnh bìa" : "Tải lên ảnh bìa"}
+                </label>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCoverChange}
+                  disabled={isSubmitting}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Định dạng: JPG, PNG, GIF
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  {ebook
+                    ? "Thay đổi file ebook (không bắt buộc)"
+                    : "Tải lên file ebook"}
+                </label>
+                <Input
+                  type="file"
+                  accept=".epub,.pdf"
+                  onChange={handleEbookChange}
+                  disabled={isSubmitting}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Định dạng: EPUB, PDF
+                </p>
+                {ebook && (
+                  <p className="text-xs font-medium mt-2">
+                    File hiện tại: {ebook.filePath}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
               onClick={onCancel}
               disabled={isSubmitting}
             >
               Hủy
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting 
-                ? 'Đang lưu...' 
-                : ebook 
-                  ? 'Cập nhật' 
-                  : 'Thêm mới'}
+              {isSubmitting ? "Đang lưu..." : ebook ? "Cập nhật" : "Thêm mới"}
             </Button>
-          </CardFooter>
+          </DialogFooter>
         </form>
       </Form>
-    </Card>
+    </>
   );
 }
