@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const ebookRoutes = require('./routes/api/ebooks');
 const adminRoutes = require('./routes/api/admin');
+const publisherRoutes = require('./routes/publisherRoutes');
 const connectDB = require('./config/db');
 const app = express();
 const port = process.env.PORT || 3001;
@@ -24,6 +25,7 @@ connectDB();
 // Routes
 app.use('/api/ebooks', ebookRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/publishers', publisherRoutes);
 
 // Serve reader
 app.use('/reader', express.static(path.join(__dirname, 'reader')));

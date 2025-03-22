@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,11 +22,24 @@ import {
 import { api } from "@/lib/api";
 import { Ebook } from "@/lib/types";
 import Image from "next/image";
+import { PublisherDialog } from "./publisher-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface EbookFormProps {
   ebook: Ebook | null;
   onSuccess: () => void;
   onCancel: () => void;
+}
+
+interface Publisher {
+  _id: string;
+  name: string;
 }
 
 const formSchema = z.object({
@@ -40,6 +53,7 @@ const formSchema = z.object({
 export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [ebookFile, setEbookFile] = useState<File | null>(null);
+  const [publishers, setPublishers] = useState<Publisher[]>([]);
   const [coverPreview, setCoverPreview] = useState<string | null>(
     ebook
       ? `${process.env.NEXT_PUBLIC_API_URL}/uploads/covers/${ebook.coverImage}`
@@ -58,6 +72,22 @@ export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
       publisher: ebook?.publisher || "",
     },
   });
+
+  const fetchPublishers = async () => {
+    try {
+      const response = await api.get("/publishers");
+      setPublishers(response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách nhà xuất bản:", error);
+      toast.error("Lỗi", {
+        description: "Không thể lấy danh sách nhà xuất bản. Vui lòng thử lại sau.",
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchPublishers();
+  }, []);
 
   const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -247,13 +277,31 @@ export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Nhà xuất bản</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        disabled={isSubmitting}
-                        className="font-['Yu_Mincho']"
-                      />
-                    </FormControl>
+                    <div className="flex gap-2">
+                      <FormControl>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          disabled={isSubmitting}
+                        >
+                          <SelectTrigger className="font-['Yu_Mincho']">
+                            <SelectValue placeholder="Chọn nhà xuất bản" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {publishers.map((publisher) => (
+                              <SelectItem
+                                key={publisher._id}
+                                value={publisher.name}
+                                className="font-['Yu_Mincho']"
+                              >
+                                {publisher.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <PublisherDialog />
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
