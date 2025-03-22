@@ -12,19 +12,19 @@ export const Promo = () => {
         <h2 className="text-2xl font-bold">
           Đọc những bài phân tích chất lượng?
         </h2>
-        <p className="text-gray-400 font-light">
+        <p className="text-gray-400 font-light mt-2">
           Hoặc muốn yêu cầu cho tập truyện raw không có trong danh sách dưới
           đây?
         </p>
         <div className="flex gap-2 z-10 mt-8 justify-center md:justify-start">
           <Link href="https://ranobe.vn" target="_blank">
-            <Button className="cursor-pointer">
+            <Button className="cursor-pointer font-light">
               <HomeIcon className="w-4 h-4" />
               Trang Chủ Ranobe
             </Button>
           </Link>
           <Link href="https://facebook.com/TheMeoki" target="_blank">
-            <Button variant="outline" className="cursor-pointer">
+            <Button variant="outline" className="cursor-pointer font-light">
               <MessageCircleIcon className="w-4 h-4" />
               Nhắn Tin
             </Button>

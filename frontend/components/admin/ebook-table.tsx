@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import Image from "next/image";
 import Link from "next/link";
+import { EbookFilters } from "./ebook-filters";
 
 interface EbookTableProps {
   ebooks: Ebook[];
@@ -34,13 +35,48 @@ interface EbookTableProps {
 }
 
 export function EbookTable({
-  ebooks,
+  ebooks: initialEbooks,
   onEdit,
   onDeleteSuccess,
 }: EbookTableProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [ebookToDelete, setEbookToDelete] = useState<Ebook | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [filteredEbooks, setFilteredEbooks] = useState<Ebook[]>(initialEbooks);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [selectedPublisher, setSelectedPublisher] = useState("");
+
+  useEffect(() => {
+    let filtered = [...initialEbooks];
+
+    // Áp dụng tìm kiếm
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase().trim();
+      filtered = filtered.filter(
+        (ebook) =>
+          ebook.name.toLowerCase().includes(query) ||
+          ebook.author.toLowerCase().includes(query) ||
+          ebook.illustrator.toLowerCase().includes(query)
+      );
+    }
+
+    // Áp dụng lọc theo nhà xuất bản
+    if (selectedPublisher) {
+      filtered = filtered.filter(
+        (ebook) => ebook.publisher === selectedPublisher
+      );
+    }
+
+    // Áp dụng sắp xếp theo ngày phát hành
+    filtered.sort((a, b) => {
+      const dateA = new Date(a.releaseDate).getTime();
+      const dateB = new Date(b.releaseDate).getTime();
+      return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+    });
+
+    setFilteredEbooks(filtered);
+  }, [initialEbooks, searchQuery, sortOrder, selectedPublisher]);
 
   const handleDelete = async () => {
     if (!ebookToDelete) return;
@@ -69,7 +105,7 @@ export function EbookTable({
     setIsDeleteDialogOpen(true);
   };
 
-  if (ebooks.length === 0) {
+  if (initialEbooks.length === 0) {
     return (
       <div className="text-center py-12 text-muted-foreground">
         Chưa có ebook nào trong thư viện
@@ -79,6 +115,12 @@ export function EbookTable({
 
   return (
     <>
+      <EbookFilters
+        onSearch={setSearchQuery}
+        onSort={setSortOrder}
+        onPublisherFilter={setSelectedPublisher}
+      />
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -93,7 +135,7 @@ export function EbookTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {ebooks.map((ebook) => (
+            {filteredEbooks.map((ebook) => (
               <TableRow key={ebook._id}>
                 <TableCell>
                   <div className="relative h-12 w-9 overflow-hidden rounded">

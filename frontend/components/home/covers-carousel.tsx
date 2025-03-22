@@ -7,7 +7,7 @@ export const CoverCarousel = () => {
         {/* <h1 className="text-4xl font-bold text-center text-white [filter:drop-shadow(0px_3px_8px_rgba(255,139,39,0.3))]">
           TRÌNH ĐỌC RAW MIỄN PHÍ
         </h1> */}
-        <p className="text-center bg-gray-800 text-white px-2 py-1">
+        <p className="text-center bg-gray-800 text-white p-2 rounded-sm">
           Tôi nghĩ chia sẻ truyện raw là tốt xét theo mặt nào đó, cho những
           người muốn dịch hoặc cho nhưng người muốn đọc nhưng không có điều kiện
           mua, cho đi là nhận lại, nhưng cho để người ta đem bán thì lại là

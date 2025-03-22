@@ -284,7 +284,7 @@ export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
                           onValueChange={field.onChange}
                           disabled={isSubmitting}
                         >
-                          <SelectTrigger className="font-['Yu_Mincho']">
+                          <SelectTrigger>
                             <SelectValue placeholder="Chọn nhà xuất bản" />
                           </SelectTrigger>
                           <SelectContent>
@@ -292,7 +292,6 @@ export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
                               <SelectItem
                                 key={publisher._id}
                                 value={publisher.name}
-                                className="font-['Yu_Mincho']"
                               >
                                 {publisher.name}
                               </SelectItem>
