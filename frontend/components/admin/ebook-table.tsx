@@ -87,6 +87,8 @@ export function EbookTable({
               <TableHead>Tên sách</TableHead>
               <TableHead>Tác giả</TableHead>
               <TableHead>Họa sĩ</TableHead>
+              <TableHead>Ngày phát hành</TableHead>
+              <TableHead>Nhà xuất bản</TableHead>
               <TableHead className="text-end">Thao tác</TableHead>
             </TableRow>
           </TableHeader>
@@ -111,6 +113,12 @@ export function EbookTable({
                 </TableCell>
                 <TableCell className="font-['Yu_Mincho']">
                   {ebook.illustrator}
+                </TableCell>
+                <TableCell className="font-['Yu_Mincho']">
+                  {new Date(ebook.releaseDate).toLocaleDateString('vi-VN')}
+                </TableCell>
+                <TableCell className="font-['Yu_Mincho']">
+                  {ebook.publisher}
                 </TableCell>
                 <TableCell className="text-end">
                   <div className="flex justify-end gap-2">

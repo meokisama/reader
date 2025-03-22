@@ -26,6 +26,14 @@ const EbookSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    releaseDate: {
+        type: Date,
+        required: true
+    },
+    publisher: {
+        type: String,
+        required: true
+    },
     createdAt: {
         type: Date,
         default: Date.now

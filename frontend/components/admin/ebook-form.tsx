@@ -33,6 +33,8 @@ const formSchema = z.object({
   name: z.string().min(1, { message: "Tên sách không được để trống" }),
   author: z.string().min(1, { message: "Tên tác giả không được để trống" }),
   illustrator: z.string().optional(),
+  releaseDate: z.string().min(1, { message: "Ngày phát hành không được để trống" }),
+  publisher: z.string().min(1, { message: "Nhà xuất bản không được để trống" }),
 });
 
 export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
@@ -52,6 +54,8 @@ export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
       author: ebook?.author || "",
       illustrator:
         ebook?.illustrator === "Unknown" ? "" : ebook?.illustrator || "",
+      releaseDate: ebook?.releaseDate ? new Date(ebook.releaseDate).toISOString().split('T')[0] : "",
+      publisher: ebook?.publisher || "",
     },
   });
 
@@ -91,6 +95,8 @@ export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
       formData.append("name", values.name);
       formData.append("author", values.author);
       formData.append("illustrator", values.illustrator || "Unknown");
+      formData.append("releaseDate", values.releaseDate);
+      formData.append("publisher", values.publisher);
 
       if (coverFile) {
         formData.append("cover", coverFile);
@@ -144,8 +150,8 @@ export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="flex flex-col md:flex-row gap-6">
-            <div className="w-full md:w-2/5 space-y-4">
-              <div className="rounded-md h-full border p-2 aspect-[2/3] relative overflow-hidden">
+            <div className="w-full md:w-1/2 space-y-4">
+              <div className="rounded-md h-full border p-2 aspect-[112/159] relative overflow-hidden">
                 {coverPreview ? (
                   <Image
                     src={coverPreview}
@@ -215,6 +221,45 @@ export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="releaseDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Ngày phát hành</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="date"
+                        {...field}
+                        disabled={isSubmitting}
+                        className="font-['Yu_Mincho']"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="publisher"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nhà xuất bản</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        disabled={isSubmitting}
+                        className="font-['Yu_Mincho']"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+
               <div>
                 <label className="block text-sm font-medium mb-1">
                   {coverPreview ? "Thay đổi ảnh bìa" : "Tải lên ảnh bìa"}

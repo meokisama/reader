@@ -8,10 +8,40 @@ const lexend = Lexend({
   subsets: ["vietnamese"],
 });
 
+const title = "Ranobe EPUB Reader | Meoki";
+const description = "Trình đọc Light Novel gốc Nhật dưới dạng sách điện tử được chia sẻ từ Meoki.";
+
 export const metadata: Metadata = {
-  title: "Ranobe EPUB Reader | Meoki",
-  description:
-    "Trình đọc Light Novel gốc Nhật dưới dạng sách điện tử được chia sẻ từ Meoki.",
+  title: title,
+  description: description,
+  creator: "Meoki",
+  publisher: "Meoki",
+  keywords: [
+    "light novel",
+    "ln",
+    "ranobe",
+    "blog",
+    "tiểu thuyết",
+    "light novel blog",
+    "ranobe epub reader",
+    "epub raw",
+    "ranobe raw",
+    "ranobe vn",
+    "ranobe vn raw",
+    "ranobe vn raw reader",
+  ],
+  metadataBase: new URL("https://ranobe.vn"),
+  openGraph: {
+    title: title,
+    description: description,
+    siteName: title,
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: title,
+    description: description,
+  },
 };
 
 export default function RootLayout({

@@ -7,4 +7,6 @@ export interface Ebook {
   filePath: string;
   createdAt: string;
   updatedAt: string;
+  releaseDate: string;
+  publisher: string;
 }

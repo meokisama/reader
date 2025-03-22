@@ -33,7 +33,7 @@ exports.getEbookById = async (req, res) => {
 // Tạo ebook mới
 exports.createEbook = async (req, res) => {
     try {
-        const { name, author, illustrator } = req.body;
+        const { name, author, illustrator, releaseDate, publisher } = req.body;
 
         // Kiểm tra file upload
         if (!req.files || !req.files.cover || !req.files.ebook) {
@@ -51,7 +51,9 @@ exports.createEbook = async (req, res) => {
             illustrator: illustrator || 'Unknown',
             coverImage: coverFile.filename,
             filePath: ebookFile.filename,
-            originalFileName: originalFileName
+            originalFileName: originalFileName,
+            releaseDate,
+            publisher
         });
 
         const ebook = await newEbook.save();
@@ -65,12 +67,14 @@ exports.createEbook = async (req, res) => {
 // Cập nhật ebook
 exports.updateEbook = async (req, res) => {
     try {
-        const { name, author, illustrator } = req.body;
+        const { name, author, illustrator, releaseDate, publisher } = req.body;
 
         const ebookFields = {
             name,
             author,
             illustrator,
+            releaseDate,
+            publisher,
             updatedAt: Date.now()
         };
 
