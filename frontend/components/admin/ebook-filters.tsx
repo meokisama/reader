@@ -39,7 +39,7 @@ export function EbookFilters({
       const response = await api.get("/publishers");
       setPublishers(response.data);
     } catch (error) {
-      console.error("Lỗi khi lấy danh sách nhà xuất bản:", error);
+      console.error("Lỗi khi lấy danh sách nhãn hiệu:", error);
     }
   };
 
@@ -76,16 +76,12 @@ export function EbookFilters({
 
       <Select value={selectedPublisher} onValueChange={handlePublisherFilter}>
         <SelectTrigger className="w-full md:w-[200px] data-[size=default]:h-12 backdrop-blur">
-          <SelectValue placeholder="Lọc theo nhà xuất bản" />
+          <SelectValue placeholder="Lọc theo nhãn hiệu" />
         </SelectTrigger>
         <SelectContent className="py-2">
           <SelectItem value="all">Tất cả</SelectItem>
           {publishers.map((publisher) => (
-            <SelectItem
-              key={publisher._id}
-              value={publisher.name}
-              className=""
-            >
+            <SelectItem key={publisher._id} value={publisher.name} className="">
               {publisher.name}
             </SelectItem>
           ))}
@@ -103,4 +99,4 @@ export function EbookFilters({
       </Select>
     </div>
   );
-} 
+}

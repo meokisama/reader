@@ -22,10 +22,6 @@ const EbookSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    originalFileName: {
-        type: String,
-        default: ''
-    },
     releaseDate: {
         type: Date,
         required: true

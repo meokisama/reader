@@ -47,7 +47,7 @@ export function EbookGrid() {
       );
     }
 
-    // Áp dụng lọc theo nhà xuất bản
+    // Áp dụng lọc theo nhãn hiệu
     if (selectedPublisher) {
       filtered = filtered.filter(
         (ebook) => ebook.publisher === selectedPublisher

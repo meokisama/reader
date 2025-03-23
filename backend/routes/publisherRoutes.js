@@ -2,16 +2,16 @@ const express = require('express');
 const router = express.Router();
 const publisherController = require('../controllers/publisherController');
 
-// Lấy tất cả nhà xuất bản
+// Lấy tất cả nhãn hiệu
 router.get('/', publisherController.getAllPublishers);
 
-// Tạo nhà xuất bản mới
+// Tạo nhãn hiệu mới
 router.post('/', publisherController.createPublisher);
 
-// Cập nhật nhà xuất bản
+// Cập nhật nhãn hiệu
 router.put('/:id', publisherController.updatePublisher);
 
-// Xóa nhà xuất bản
+// Xóa nhãn hiệu
 router.delete('/:id', publisherController.deletePublisher);
 
 module.exports = router; 

@@ -46,8 +46,10 @@ const formSchema = z.object({
   name: z.string().min(1, { message: "Tên sách không được để trống" }),
   author: z.string().min(1, { message: "Tên tác giả không được để trống" }),
   illustrator: z.string().optional(),
-  releaseDate: z.string().min(1, { message: "Ngày phát hành không được để trống" }),
-  publisher: z.string().min(1, { message: "Nhà xuất bản không được để trống" }),
+  releaseDate: z
+    .string()
+    .min(1, { message: "Ngày phát hành không được để trống" }),
+  publisher: z.string().min(1, { message: "Nhãn hiệu không được để trống" }),
 });
 
 export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
@@ -68,7 +70,9 @@ export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
       author: ebook?.author || "",
       illustrator:
         ebook?.illustrator === "Unknown" ? "" : ebook?.illustrator || "",
-      releaseDate: ebook?.releaseDate ? new Date(ebook.releaseDate).toISOString().split('T')[0] : "",
+      releaseDate: ebook?.releaseDate
+        ? new Date(ebook.releaseDate).toISOString().split("T")[0]
+        : "",
       publisher: ebook?.publisher || "",
     },
   });
@@ -78,9 +82,9 @@ export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
       const response = await api.get("/publishers");
       setPublishers(response.data);
     } catch (error) {
-      console.error("Lỗi khi lấy danh sách nhà xuất bản:", error);
+      console.error("Lỗi khi lấy danh sách nhãn hiệu:", error);
       toast.error("Lỗi", {
-        description: "Không thể lấy danh sách nhà xuất bản. Vui lòng thử lại sau.",
+        description: "Không thể lấy danh sách nhãn hiệu. Vui lòng thử lại sau.",
       });
     }
   };
@@ -259,12 +263,7 @@ export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
                   <FormItem>
                     <FormLabel>Ngày phát hành</FormLabel>
                     <FormControl>
-                      <Input
-                        type="date"
-                        {...field}
-                        disabled={isSubmitting}
-                        className="font-['Yu_Mincho']"
-                      />
+                      <Input type="date" {...field} disabled={isSubmitting} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -276,7 +275,7 @@ export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
                 name="publisher"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nhà xuất bản</FormLabel>
+                    <FormLabel>Nhãn hiệu</FormLabel>
                     <div className="flex gap-2">
                       <FormControl>
                         <Select
@@ -285,7 +284,7 @@ export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
                           disabled={isSubmitting}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Chọn nhà xuất bản" />
+                            <SelectValue placeholder="Chọn nhãn hiệu" />
                           </SelectTrigger>
                           <SelectContent>
                             {publishers.map((publisher) => (
@@ -305,7 +304,6 @@ export function EbookForm({ ebook, onSuccess, onCancel }: EbookFormProps) {
                   </FormItem>
                 )}
               />
-              
 
               <div>
                 <label className="block text-sm font-medium mb-1">

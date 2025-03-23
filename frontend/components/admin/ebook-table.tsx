@@ -61,7 +61,7 @@ export function EbookTable({
       );
     }
 
-    // Áp dụng lọc theo nhà xuất bản
+    // Áp dụng lọc theo nhãn hiệu
     if (selectedPublisher) {
       filtered = filtered.filter(
         (ebook) => ebook.publisher === selectedPublisher
@@ -129,8 +129,8 @@ export function EbookTable({
               <TableHead>Tên sách</TableHead>
               <TableHead>Tác giả</TableHead>
               <TableHead>Họa sĩ</TableHead>
-              <TableHead>Ngày phát hành</TableHead>
-              <TableHead>Nhà xuất bản</TableHead>
+              <TableHead className="text-center">Ngày phát hành</TableHead>
+              <TableHead>Nhãn hiệu</TableHead>
               <TableHead className="text-end">Thao tác</TableHead>
             </TableRow>
           </TableHeader>
@@ -156,12 +156,14 @@ export function EbookTable({
                 <TableCell className="font-['Yu_Mincho']">
                   {ebook.illustrator}
                 </TableCell>
-                <TableCell className="font-['Yu_Mincho']">
-                  {new Date(ebook.releaseDate).toLocaleDateString('vi-VN')}
+                <TableCell className="font-light text-center">
+                  {new Date(ebook.releaseDate).toLocaleDateString("vi-VN", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
                 </TableCell>
-                <TableCell className="font-['Yu_Mincho']">
-                  {ebook.publisher}
-                </TableCell>
+                <TableCell className="font-light">{ebook.publisher}</TableCell>
                 <TableCell className="text-end">
                   <div className="flex justify-end gap-2">
                     <Button size="icon" variant="outline" asChild>

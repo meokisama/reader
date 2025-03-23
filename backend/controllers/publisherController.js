@@ -1,6 +1,6 @@
 const Publisher = require('../models/Publisher');
 
-// Lấy tất cả nhà xuất bản
+// Lấy tất cả nhãn hiệu
 exports.getAllPublishers = async (req, res) => {
     try {
         const publishers = await Publisher.find().select('-__v').sort({ name: 1 });
@@ -11,15 +11,15 @@ exports.getAllPublishers = async (req, res) => {
     }
 };
 
-// Tạo nhà xuất bản mới
+// Tạo nhãn hiệu mới
 exports.createPublisher = async (req, res) => {
     try {
         const { name } = req.body;
 
-        // Kiểm tra xem nhà xuất bản đã tồn tại chưa
+        // Kiểm tra xem nhãn hiệu đã tồn tại chưa
         let publisher = await Publisher.findOne({ name });
         if (publisher) {
-            return res.status(400).json({ msg: 'Nhà xuất bản này đã tồn tại' });
+            return res.status(400).json({ msg: 'nhãn hiệu này đã tồn tại' });
         }
 
         publisher = new Publisher({
@@ -34,7 +34,7 @@ exports.createPublisher = async (req, res) => {
     }
 };
 
-// Cập nhật nhà xuất bản
+// Cập nhật nhãn hiệu
 exports.updatePublisher = async (req, res) => {
     try {
         const { name } = req.body;
@@ -45,7 +45,7 @@ exports.updatePublisher = async (req, res) => {
             _id: { $ne: req.params.id }
         });
         if (existingPublisher) {
-            return res.status(400).json({ msg: 'Nhà xuất bản này đã tồn tại' });
+            return res.status(400).json({ msg: 'nhãn hiệu này đã tồn tại' });
         }
 
         const publisher = await Publisher.findByIdAndUpdate(
@@ -58,7 +58,7 @@ exports.updatePublisher = async (req, res) => {
         );
 
         if (!publisher) {
-            return res.status(404).json({ msg: 'Không tìm thấy nhà xuất bản' });
+            return res.status(404).json({ msg: 'Không tìm thấy nhãn hiệu' });
         }
 
         res.json(publisher);
@@ -68,16 +68,16 @@ exports.updatePublisher = async (req, res) => {
     }
 };
 
-// Xóa nhà xuất bản
+// Xóa nhãn hiệu
 exports.deletePublisher = async (req, res) => {
     try {
         const publisher = await Publisher.findById(req.params.id);
         if (!publisher) {
-            return res.status(404).json({ msg: 'Không tìm thấy nhà xuất bản' });
+            return res.status(404).json({ msg: 'Không tìm thấy nhãn hiệu' });
         }
 
         await Publisher.findByIdAndDelete(req.params.id);
-        res.json({ msg: 'Nhà xuất bản đã được xóa' });
+        res.json({ msg: 'nhãn hiệu đã được xóa' });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Lỗi server');

@@ -20,12 +20,7 @@ const storage = multer.diskStorage({
     filename: function (req, file, cb) {
         const ext = path.extname(file.originalname);
         const newFilename = `${uuidv4()}${ext}`;
-
         cb(null, newFilename);
-
-        // Lưu tên gốc vào request để có thể sử dụng sau này nếu cần
-        if (!req.originalFilenames) req.originalFilenames = {};
-        req.originalFilenames[file.fieldname] = file.originalname;
     }
 });
 

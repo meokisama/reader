@@ -43,15 +43,12 @@ exports.createEbook = async (req, res) => {
         const coverFile = req.files.cover[0];
         const ebookFile = req.files.ebook[0];
 
-        const originalFileName = req.originalFilenames?.ebook || ebookFile.originalname;
-
         const newEbook = new Ebook({
             name,
             author,
             illustrator: illustrator || 'Unknown',
             coverImage: coverFile.filename,
             filePath: ebookFile.filename,
-            originalFileName: originalFileName,
             releaseDate,
             publisher
         });

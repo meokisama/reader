@@ -34,7 +34,7 @@ import { Edit, Trash2, Plus } from "lucide-react";
 import { api } from "@/lib/api";
 
 const formSchema = z.object({
-  name: z.string().min(1, { message: "Tên nhà xuất bản không được để trống" }),
+  name: z.string().min(1, { message: "Tên nhãn hiệu không được để trống" }),
 });
 
 interface Publisher {
@@ -45,7 +45,9 @@ interface Publisher {
 export function PublisherDialog() {
   const [publishers, setPublishers] = useState<Publisher[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [editingPublisher, setEditingPublisher] = useState<Publisher | null>(null);
+  const [editingPublisher, setEditingPublisher] = useState<Publisher | null>(
+    null
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -60,9 +62,9 @@ export function PublisherDialog() {
       const response = await api.get("/publishers");
       setPublishers(response.data);
     } catch (error) {
-      console.error("Lỗi khi lấy danh sách nhà xuất bản:", error);
+      console.error("Lỗi khi lấy danh sách nhãn hiệu:", error);
       toast.error("Lỗi", {
-        description: "Không thể lấy danh sách nhà xuất bản. Vui lòng thử lại sau.",
+        description: "Không thể lấy danh sách nhãn hiệu. Vui lòng thử lại sau.",
       });
     }
   };
@@ -81,13 +83,13 @@ export function PublisherDialog() {
         // Cập nhật
         await api.put(`/publishers/${editingPublisher._id}`, values);
         toast.success("Cập nhật thành công", {
-          description: `Đã cập nhật nhà xuất bản "${values.name}"`,
+          description: `Đã cập nhật nhãn hiệu "${values.name}"`,
         });
       } else {
         // Thêm mới
         await api.post("/publishers", values);
         toast.success("Thêm mới thành công", {
-          description: `Đã thêm nhà xuất bản "${values.name}"`,
+          description: `Đã thêm nhãn hiệu "${values.name}"`,
         });
       }
 
@@ -95,9 +97,9 @@ export function PublisherDialog() {
       setEditingPublisher(null);
       fetchPublishers();
     } catch (error) {
-      console.error("Lỗi khi lưu nhà xuất bản:", error);
+      console.error("Lỗi khi lưu nhãn hiệu:", error);
       toast.error("Lỗi", {
-        description: "Không thể lưu thông tin nhà xuất bản. Vui lòng thử lại sau.",
+        description: "Không thể lưu thông tin nhãn hiệu. Vui lòng thử lại sau.",
       });
     } finally {
       setIsSubmitting(false);
@@ -113,13 +115,13 @@ export function PublisherDialog() {
     try {
       await api.delete(`/publishers/${publisher._id}`);
       toast.success("Xóa thành công", {
-        description: `Đã xóa nhà xuất bản "${publisher.name}"`,
+        description: `Đã xóa nhãn hiệu "${publisher.name}"`,
       });
       fetchPublishers();
     } catch (error) {
-      console.error("Lỗi khi xóa nhà xuất bản:", error);
+      console.error("Lỗi khi xóa nhãn hiệu:", error);
       toast.error("Lỗi", {
-        description: "Không thể xóa nhà xuất bản. Vui lòng thử lại sau.",
+        description: "Không thể xóa nhãn hiệu. Vui lòng thử lại sau.",
       });
     }
   };
@@ -128,13 +130,13 @@ export function PublisherDialog() {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">
-          <Plus className="h-4 w-4 mr-2" />
-          Quản lý nhà xuất bản
+          <Plus className="h-4 w-4" />
+          Quản lý nhãn hiệu
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Quản lý nhà xuất bản</DialogTitle>
+          <DialogTitle>Quản lý nhãn hiệu</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -144,12 +146,12 @@ export function PublisherDialog() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên nhà xuất bản</FormLabel>
+                  <FormLabel>Tên nhãn hiệu</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       disabled={isSubmitting}
-                      className="font-['Yu_Mincho']"
+                      className="font-light"
                     />
                   </FormControl>
                   <FormMessage />
@@ -186,16 +188,14 @@ export function PublisherDialog() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Tên nhà xuất bản</TableHead>
+                <TableHead>Tên nhãn hiệu</TableHead>
                 <TableHead className="text-end">Thao tác</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {publishers.map((publisher) => (
                 <TableRow key={publisher._id}>
-                  <TableCell className="font-['Yu_Mincho']">
-                    {publisher.name}
-                  </TableCell>
+                  <TableCell className="font-light">{publisher.name}</TableCell>
                   <TableCell className="text-end">
                     <div className="flex justify-end gap-2">
                       <Button
@@ -223,4 +223,4 @@ export function PublisherDialog() {
       </DialogContent>
     </Dialog>
   );
-} 
+}
