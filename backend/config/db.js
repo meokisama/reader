@@ -16,16 +16,16 @@ const connectDB = async () => {
             socketTimeoutMS: 45000, // Timeout socket
         };
 
-        if (MONGO_USER && MONGO_PASSWORD) {
-            options.auth = {
-                username: MONGO_USER,
-                password: MONGO_PASSWORD
-            };
-        }
-
         let connectionString = MONGO_URI;
-        if (MONGO_URI.startsWith('mongodb://') && MONGO_USER && MONGO_PASSWORD) {
-            if (!MONGO_URI.includes('@')) {
+
+        // Nếu có username và password, thêm vào connection string
+        if (MONGO_USER && MONGO_PASSWORD) {
+            // Xử lý connection string có chứa username và password
+            if (MONGO_URI.includes('@')) {
+                // Nếu URI đã có username và password, không thêm vào nữa
+                connectionString = MONGO_URI;
+            } else {
+                // Nếu URI chưa có username và password, thêm vào
                 const dbPart = MONGO_URI.replace('mongodb://', '');
                 connectionString = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${dbPart}`;
             }

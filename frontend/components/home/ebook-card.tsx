@@ -30,6 +30,7 @@ export function EbookCard({ ebook }: EbookCardProps) {
       </div>
       <Link
         href={`${process.env.NEXT_PUBLIC_API_URL}/reader?book=${ebook.filePath}`}
+        target="_blank"
       >
         <Button className="w-full mt-4 cursor-pointer">
           <Book className="w-4 h-4" />

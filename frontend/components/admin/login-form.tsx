@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -13,14 +13,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { api } from '@/lib/api';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { api, getCsrfToken } from "@/lib/api";
 import { toast } from "sonner";
 
 const formSchema = z.object({
   password: z.string().min(1, {
-    message: 'Mật khẩu không được để trống',
+    message: "Mật khẩu không được để trống",
   }),
 });
 
@@ -31,28 +31,56 @@ export function LoginForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      password: '',
+      password: "",
     },
   });
+
+  // Lấy CSRF token khi component mount
+  useEffect(() => {
+    getCsrfToken();
+  }, []);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setIsLoading(true);
-      const res = await api.post('/admin/login', { password: values.password });
-      localStorage.setItem('adminToken', res.data.token);
-      toast.success("Đăng nhập thành công",{
-        description: 'Đang chuyển hướng đến trang quản trị...',
+      // Đảm bảo có CSRF token trước khi đăng nhập
+      await getCsrfToken();
+
+      const res = await api.post("/admin/login", { password: values.password });
+
+      // Lưu token và thời gian hết hạn
+      localStorage.setItem("adminToken", res.data.token);
+      localStorage.setItem(
+        "adminTokenExpires",
+        new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+      );
+
+      toast.success("Đăng nhập thành công", {
+        description: "Đang chuyển hướng đến trang quản trị...",
       });
-      router.push('/admin');
-    } catch (error) {
-      toast.error("Đăng nhập thất bại",{
-        description: 'Mật khẩu không đúng',
+      router.push("/admin");
+    } catch (error: any) {
+      toast.error("Đăng nhập thất bại", {
+        description: error.response?.data?.msg || "Có lỗi xảy ra",
       });
-      console.error('Lỗi đăng nhập:', error);
+      console.error("Lỗi đăng nhập:", error);
     } finally {
       setIsLoading(false);
     }
   }
+
+  // Kiểm tra token hết hạn
+  useEffect(() => {
+    const tokenExpires = localStorage.getItem("adminTokenExpires");
+    if (tokenExpires) {
+      const expiresDate = new Date(tokenExpires);
+      if (expiresDate < new Date()) {
+        localStorage.removeItem("adminToken");
+        localStorage.removeItem("adminTokenExpires");
+        router.push("/admin/login");
+      }
+    }
+  }, [router]);
 
   return (
     <Form {...form}>
@@ -76,7 +104,7 @@ export function LoginForm() {
           )}
         />
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? 'Đang xử lý...' : 'Đăng nhập'}
+          {isLoading ? "Đang xử lý..." : "Đăng nhập"}
         </Button>
       </form>
     </Form>

@@ -1,7 +1,10 @@
+require('dotenv').config();
+
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const csrf = require('csurf');
+const cookieParser = require('cookie-parser');
 const ebookRoutes = require('./routes/api/ebooks');
 const adminRoutes = require('./routes/api/admin');
 const publisherRoutes = require('./routes/publisherRoutes');
@@ -10,14 +13,26 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
 app.use(express.json());
-app.use('/uploads/covers', express.static(path.join(__dirname, 'uploads', 'covers')));
+app.use(cookieParser());
 
-// Use this to allow both origins
+// CORS configuration
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://hub.ranobe.vn']
+    origin: ['http://localhost:3000', 'https://hub.ranobe.vn'],
+    credentials: true
 }));
+
+// CSRF protection
+const csrfProtection = csrf({
+    cookie: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict'
+    }
+});
+
+// Áp dụng CSRF protection cho các route admin
+app.use('/api/admin', csrfProtection);
 
 // Connect to MongoDB
 connectDB();
@@ -29,7 +44,7 @@ app.use('/api/publishers', publisherRoutes);
 
 // Serve reader
 app.use('/reader', express.static(path.join(__dirname, 'reader')));
-
+app.use('/uploads/covers', express.static(path.join(__dirname, 'uploads', 'covers')));
 app.use('/uploads/ebooks', (req, res, next) => {
     const referer = req.get('referer');
     if (!referer) {
@@ -56,6 +71,17 @@ app.get('/reader', (req, res, next) => {
 
 app.get('/reader/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'reader', 'index.html'));
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    if (err.code === 'EBADCSRFTOKEN') {
+        return res.status(403).json({
+            msg: 'CSRF token không hợp lệ'
+        });
+    }
+    console.error(err.stack);
+    res.status(500).json({ msg: 'Lỗi server' });
 });
 
 app.listen(port, () => {
