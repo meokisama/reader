@@ -55,7 +55,6 @@ connectDB();
 
 // Áp dụng rate limiting cho các routes
 app.use('/api/ebooks', apiLimiter);
-app.use('/api/admin/login', loginLimiter);
 app.use('/api/ebooks/upload', uploadLimiter);
 
 // Routes

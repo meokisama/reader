@@ -2,15 +2,8 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const rateLimit = require('express-rate-limit');
 const config = require('../../config/config');
-
-// Rate limiting middleware
-const loginLimiter = rateLimit({
-    windowMs: config.RATE_LIMIT_WINDOW,
-    max: config.RATE_LIMIT_MAX,
-    message: { msg: 'Quá nhiều lần đăng nhập thất bại. Vui lòng thử lại sau 15 phút.' }
-});
+const { loginLimiter } = require('../../middleware/security');
 
 // @route   GET api/admin/csrf-token
 // @desc    Lấy CSRF token
