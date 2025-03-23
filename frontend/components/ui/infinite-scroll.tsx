@@ -88,7 +88,7 @@ export const InfiniteScroll = ({
           alt="light novel cover carousel"
           width={2880}
           height={230}
-          className="w-full h-[150px] md:h-[230px] object-cover"
+          className="w-full h-[300px] md:h-[230px] object-cover"
           quality={100}
         />
       </div>
