@@ -41,7 +41,7 @@ const clearCache = async (pattern) => {
             console.log(`Cleared cache for pattern: ${pattern}`);
         }
     } catch (error) {
-        console.error('Clear Cache Error:', error);
+        console.error('Error clearing cache:', error);
     }
 };
 

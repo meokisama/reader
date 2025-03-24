@@ -1,6 +1,7 @@
 const Ebook = require('../models/Ebook');
 const path = require('path');
 const fs = require('fs');
+const { clearCache } = require('../middleware/cache');
 
 // Lấy tất cả ebook
 exports.getAllEbooks = async (req, res) => {
@@ -54,6 +55,10 @@ exports.createEbook = async (req, res) => {
         });
 
         const ebook = await newEbook.save();
+
+        // Xóa cache cho danh sách ebook
+        await clearCache('cache:/api/ebooks*');
+
         res.json(ebook);
     } catch (err) {
         console.error(err.message);
@@ -116,6 +121,9 @@ exports.updateEbook = async (req, res) => {
             { new: true }
         );
 
+        // Xóa cache cho danh sách ebook và ebook cụ thể
+        await clearCache('cache:/api/ebooks*');
+
         res.json(ebook);
     } catch (err) {
         console.error(err.message);
@@ -145,6 +153,10 @@ exports.deleteEbook = async (req, res) => {
         }
 
         await Ebook.findByIdAndDelete(req.params.id);
+
+        // Xóa cache cho danh sách ebook và ebook cụ thể
+        await clearCache('cache:/api/ebooks*');
+
         res.json({ msg: 'Ebook đã được xóa' });
     } catch (err) {
         console.error(err.message);
