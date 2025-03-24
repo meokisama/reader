@@ -11,12 +11,7 @@ const publisherRoutes = require('./routes/publisherRoutes');
 const connectDB = require('./config/db');
 const {
     apiLimiter,
-    loginLimiter,
-    uploadLimiter,
-    helmetConfig,
-    validateInput,
-    sanitizeInput,
-    blockDangerousRequests
+    uploadLimiter
 } = require('./middleware/security');
 
 const app = express();
@@ -25,12 +20,6 @@ const port = process.env.PORT || 3001;
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
-
-// Áp dụng các middleware bảo mật
-app.use(helmetConfig); // Thêm các HTTP headers bảo mật
-app.use(blockDangerousRequests); // Chặn các request nguy hiểm
-app.use(sanitizeInput); // Sanitize input
-app.use(validateInput); // Validate input
 
 // CORS configuration
 app.use(cors({
