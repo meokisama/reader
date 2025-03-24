@@ -5,6 +5,7 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const adminAuth = require('../../middleware/adminAuth');
 const ebookController = require('../../controllers/ebookController');
+const { cache } = require('../../middleware/cache');
 
 // Cấu hình Multer cho upload file
 const storage = multer.diskStorage({
@@ -48,12 +49,12 @@ const uploadFields = upload.fields([
 // @route   GET api/ebooks
 // @desc    Lấy tất cả ebook
 // @access  Public
-router.get('/', ebookController.getAllEbooks);
+router.get('/', cache(300), ebookController.getAllEbooks);
 
 // @route   GET api/ebooks/:id
 // @desc    Lấy ebook theo ID
 // @access  Public
-router.get('/:id', ebookController.getEbookById);
+router.get('/:id', cache(600), ebookController.getEbookById);
 
 // @route   POST api/ebooks
 // @desc    Tạo ebook mới

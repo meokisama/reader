@@ -5,6 +5,7 @@ const cors = require('cors');
 const path = require('path');
 const csrf = require('csurf');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 const ebookRoutes = require('./routes/api/ebooks');
 const adminRoutes = require('./routes/api/admin');
 const publisherRoutes = require('./routes/publisherRoutes');
@@ -20,6 +21,15 @@ const port = process.env.PORT || 3001;
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
+app.use(compression({
+    threshold: 1024, // Chỉ nén các response > 1KB
+    filter: (req, res) => {
+        if (req.headers['x-no-compression']) {
+            return false;
+        }
+        return compression.filter(req, res);
+    }
+}));
 
 // CORS configuration
 app.use(cors({
