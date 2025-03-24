@@ -36,6 +36,7 @@ Ranobe Reader is a full-stack web application that allows users to read light no
 - Multer for file uploads
 - Express Rate Limiting
 - CSRF protection
+- Bibi for EPUB reader
 
 ### Getting Started
 
