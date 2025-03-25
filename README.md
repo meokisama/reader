@@ -15,6 +15,14 @@
 
 Ranobe Reader is a full-stack web application that allows users to read light novels with a modern, responsive interface. The application features a clean design, smooth reading experience, and user-friendly navigation.
 
+### Preview
+
+![](./preview/01.png)
+
+![](./preview/02.png)
+
+![](./preview/03.png)
+
 ### Tech Stack
 
 #### Frontend
