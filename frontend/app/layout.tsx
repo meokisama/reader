@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Lexend } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import localFont from "next/font/local";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 
 const lexend = Lexend({
@@ -8,8 +10,16 @@ const lexend = Lexend({
   subsets: ["vietnamese"],
 });
 
+const jaro = localFont({
+  weight: "400",
+  src: "./Jaro.ttf",
+  variable: "--font-jaro",
+  display: "swap",
+});
+
 const title = "Ranobe EPUB Reader | Meoki";
-const description = "Trình đọc Light Novel gốc Nhật dưới dạng sách điện tử được chia sẻ từ Meoki.";
+const description =
+  "Trình đọc Light Novel gốc Nhật dưới dạng sách điện tử được chia sẻ từ Meoki.";
 
 export const metadata: Metadata = {
   title: title,
@@ -51,10 +61,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${lexend.variable} antialiased`}>
+      <body className={`${lexend.variable} ${jaro.variable} antialiased`}>
         {children}
         <Toaster />
       </body>
+      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA4 as string} />
     </html>
   );
 }
