@@ -48,12 +48,13 @@ export function LoginForm() {
 
       const res = await api.post("/admin/login", { password: values.password });
 
-      // Lưu token và thời gian hết hạn
-      localStorage.setItem("adminToken", res.data.token);
-      localStorage.setItem(
-        "adminTokenExpires",
-        new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-      );
+      // Lưu token và thời gian hết hạn vào cookie
+      document.cookie = `adminToken=${res.data.token}; path=/; max-age=${
+        24 * 60 * 60
+      }; SameSite=Strict`;
+      document.cookie = `adminTokenExpires=${new Date(
+        Date.now() + 24 * 60 * 60 * 1000
+      ).toISOString()}; path=/; max-age=${24 * 60 * 60}; SameSite=Strict`;
 
       toast.success("Đăng nhập thành công", {
         description: "Đang chuyển hướng đến trang quản trị...",
@@ -71,12 +72,21 @@ export function LoginForm() {
 
   // Kiểm tra token hết hạn
   useEffect(() => {
-    const tokenExpires = localStorage.getItem("adminTokenExpires");
+    const getCookie = (name: string) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop()?.split(";").shift();
+    };
+
+    const tokenExpires = getCookie("adminTokenExpires");
     if (tokenExpires) {
       const expiresDate = new Date(tokenExpires);
       if (expiresDate < new Date()) {
-        localStorage.removeItem("adminToken");
-        localStorage.removeItem("adminTokenExpires");
+        // Xóa cookie
+        document.cookie =
+          "adminToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict";
+        document.cookie =
+          "adminTokenExpires=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict";
         router.push("/admin/login");
       }
     }

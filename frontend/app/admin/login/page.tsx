@@ -16,7 +16,13 @@ export default function AdminLoginPage() {
 
   useEffect(() => {
     // Kiểm tra nếu đã đăng nhập thì chuyển hướng đến trang admin
-    const token = localStorage.getItem("adminToken");
+    const getCookie = (name: string) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop()?.split(";").shift();
+    };
+
+    const token = getCookie("adminToken");
     if (token) {
       router.push("/admin");
     }

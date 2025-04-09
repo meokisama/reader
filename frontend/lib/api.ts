@@ -25,9 +25,15 @@ export const getCsrfToken = async () => {
 // Interceptor để thêm token vào header khi có yêu cầu
 api.interceptors.request.use(
   async (config) => {
-    // Lấy token từ localStorage (chỉ hoạt động ở client-side)
+    // Lấy token từ cookie
+    const getCookie = (name: string) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop()?.split(";").shift();
+    };
+
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("adminToken");
+      const token = getCookie("adminToken");
       if (token) {
         config.headers["x-admin-token"] = token;
       }
@@ -64,9 +70,12 @@ api.interceptors.response.use(
 
     // Kiểm tra nếu là lỗi 401 Unauthorized
     if (error.response && error.response.status === 401) {
-      // Nếu ở client-side, xóa token và chuyển về trang login
+      // Nếu ở client-side, xóa cookie và chuyển về trang login
       if (typeof window !== "undefined") {
-        localStorage.removeItem("adminToken");
+        document.cookie =
+          "adminToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict";
+        document.cookie =
+          "adminTokenExpires=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict";
         // Chuyển hướng nếu không ở trang login
         if (!window.location.pathname.includes("/admin/login")) {
           window.location.href = "/admin/login";

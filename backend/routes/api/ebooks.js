@@ -2,10 +2,30 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const adminAuth = require('../../middleware/adminAuth');
 const ebookController = require('../../controllers/ebookController');
 const { cache } = require('../../middleware/cache');
+
+// Tạo thư mục upload nếu chưa tồn tại
+const createUploadDirs = () => {
+    const dirs = [
+        path.join(__dirname, '../../uploads'),
+        path.join(__dirname, '../../uploads/covers'),
+        path.join(__dirname, '../../uploads/ebooks')
+    ];
+
+    dirs.forEach(dir => {
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+            console.log(`Created directory: ${dir}`);
+        }
+    });
+};
+
+// Gọi hàm tạo thư mục
+createUploadDirs();
 
 // Cấu hình Multer cho upload file
 const storage = multer.diskStorage({

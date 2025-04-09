@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('../../config/config');
 const { loginLimiter } = require('../../middleware/security');
+const adminAuth = require('../../middleware/adminAuth');
 
 // @route   GET api/admin/csrf-token
 // @desc    Lấy CSRF token
@@ -41,6 +42,13 @@ router.post('/login', loginLimiter, async (req, res) => {
         console.error('Lỗi đăng nhập:', err);
         res.status(500).json({ msg: 'Lỗi server' });
     }
+});
+
+// @route   GET api/admin/verify
+// @desc    Verify admin token
+// @access  Admin
+router.get('/verify', adminAuth, (req, res) => {
+    res.json({ msg: 'Token hợp lệ' });
 });
 
 module.exports = router;

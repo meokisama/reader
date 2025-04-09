@@ -17,7 +17,7 @@ const jaro = localFont({
   display: "swap",
 });
 
-const title = "Ranobe EPUB Reader | Meoki";
+const title = "Ranobe Reader | Meoki";
 const description =
   "Trình đọc Light Novel gốc Nhật dưới dạng sách điện tử được chia sẻ từ Meoki.";
 

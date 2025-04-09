@@ -19,14 +19,36 @@ export default function AdminPage() {
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
-    // Kiểm tra đăng nhập
-    const token = localStorage.getItem("adminToken");
+    // Kiểm tra đăng nhập từ cookie
+    const getCookie = (name: string) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop()?.split(";").shift();
+    };
+
+    const token = getCookie("adminToken");
     if (!token) {
       router.push("/admin/login");
       return;
     }
 
-    fetchEbooks();
+    // Verify token với backend
+    const verifyToken = async () => {
+      try {
+        await api.get("/admin/verify");
+        fetchEbooks();
+      } catch (err) {
+        console.error("Lỗi khi verify token:", err);
+        // Xóa cookie khi token không hợp lệ
+        document.cookie =
+          "adminToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict";
+        document.cookie =
+          "adminTokenExpires=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict";
+        router.push("/admin/login");
+      }
+    };
+
+    verifyToken();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
@@ -39,7 +61,11 @@ export default function AdminPage() {
       console.error("Lỗi khi tải danh sách ebook:", err);
       // Kiểm tra nếu lỗi 401 - Unauthorized
       if (axios.isAxiosError(err) && err.response?.status === 401) {
-        localStorage.removeItem("adminToken");
+        // Xóa cookie khi token không hợp lệ
+        document.cookie =
+          "adminToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict";
+        document.cookie =
+          "adminTokenExpires=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict";
         router.push("/admin/login");
       }
     } finally {
