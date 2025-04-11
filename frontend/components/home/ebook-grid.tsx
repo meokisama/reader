@@ -81,13 +81,13 @@ export function EbookGrid() {
   }
 
   return (
-    <div className="max-w-screen-xl mx-auto p-4 min-h-screen">
+    <div className="max-w-screen-xl mx-auto p-4 min-h-screen pb-12">
       <EbookFilters
         onSearch={setSearchQuery}
         onSort={setSortOrder}
         onPublisherFilter={setSelectedPublisher}
       />
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 lg:gap-y-10">
         {filteredEbooks.map((ebook) => (
           <EbookCard key={ebook._id} ebook={ebook} />
         ))}

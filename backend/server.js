@@ -9,6 +9,7 @@ const compression = require('compression');
 const ebookRoutes = require('./routes/api/ebooks');
 const adminRoutes = require('./routes/api/admin');
 const publisherRoutes = require('./routes/publisherRoutes');
+const subscriberRoutes = require('./routes/subscriberRoutes');
 const connectDB = require('./config/db');
 const {
     apiLimiter,
@@ -33,7 +34,7 @@ app.use(compression({
 
 // CORS configuration
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://hub.ranobe.vn'],
+    origin: ['http://localhost:3000', 'http://localhost:3002', 'https://hub.ranobe.vn'],
     credentials: true
 }));
 
@@ -60,6 +61,7 @@ app.use('/api/ebooks/upload', uploadLimiter);
 app.use('/api/ebooks', ebookRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/publishers', publisherRoutes);
+app.use('/api/subscribers', subscriberRoutes);
 
 // Serve reader
 app.use('/reader', express.static(path.join(__dirname, 'reader')));

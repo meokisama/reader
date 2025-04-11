@@ -3,7 +3,9 @@ import axios from "axios";
 // Tạo API instance với axios
 export const api = axios.create({
   baseURL:
-    process.env.NEXT_PUBLIC_API_URL + "/api" || "http://localhost:3001/api",
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:3001/api"
+      : process.env.NEXT_PUBLIC_API_URL + "/api",
   withCredentials: true, // Cho phép gửi cookies
 });
 

@@ -2,6 +2,7 @@ const Ebook = require('../models/Ebook');
 const path = require('path');
 const fs = require('fs');
 const { clearCache } = require('../middleware/cache');
+const { sendNotification } = require('./subscriberController');
 
 // Lấy tất cả ebook
 exports.getAllEbooks = async (req, res) => {
@@ -58,6 +59,9 @@ exports.createEbook = async (req, res) => {
 
         // Xóa cache cho danh sách ebook
         await clearCache('cache:/api/ebooks*');
+
+        // Gửi thông báo cho subscribers
+        await sendNotification(name);
 
         res.json(ebook);
     } catch (err) {
